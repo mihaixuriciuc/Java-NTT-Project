@@ -11,20 +11,28 @@ import java.util.List;
 @RestController
 public class ListController {
     @GetMapping("/pets")
-    public List<Pets> getPets(@RequestParam(required = false) String type){
+    public List<Pets> getPets(@RequestParam(required = false) String type, @RequestParam(defaultValue = "name") String sort,@RequestParam(defaultValue = "cresc") String order) {
         List<Pets> myPets = generatePetInventory();
 
         List<Pets> filteredPets = new ArrayList<>();
 
 
-        for (Pets pet:myPets) {
-            if (type ==null || pet.getType().equalsIgnoreCase(type)) {
+        for (Pets pet : myPets) {
+            if (type == null || pet.getType().equalsIgnoreCase(type)) {
                 filteredPets.add(pet);
-            };
-        };
+            }
+        }
+        List<Pets> finalpets = sortAlphabetticaly(sort,filteredPets);
 
-        return filteredPets;
+        if(order.equalsIgnoreCase("desc")) {
+            Collections.reverse(finalpets);
+        }
+
+
+
+        return finalpets;
     }
+
     private List<Pets> generatePetInventory() {
         List<Pets> list = new ArrayList<>();
         list.add(new Pets("Bobby", "Dog", "Marian Valeriu", "Pitbull", 6, 28));
@@ -55,4 +63,90 @@ public class ListController {
         return list;
     }
 
+    private List<Pets> sortAlphabetticaly(String sortValue, List<Pets> pets) {
+
+        int n = pets.size();
+
+        if (sortValue.equalsIgnoreCase("name")) {
+            for (int i = 0; i < n; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    String nameI = pets.get(i).getName();
+                    String nameJ = pets.get(j).getName();
+                    if (nameI.compareTo(nameJ) > 0) {
+                        // swapping
+                        Pets temp = pets.get(i);
+                        pets.set(i, pets.get(j));
+                        pets.set(j, temp);
+                    }
+                }
+            }
+        } else if (sortValue.equalsIgnoreCase("type")) {
+            for (int i = 0; i < n; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    String nameI = pets.get(i).getType();
+                    String nameJ = pets.get(j).getType();
+                    if (nameI.compareTo(nameJ) > 0) {
+                        // swapping
+                        Pets temp = pets.get(i);
+                        pets.set(i, pets.get(j));
+                        pets.set(j, temp);
+                    }
+                }
+            }
+        } else if (sortValue.equalsIgnoreCase("race")) {
+            for (int i = 0; i < n; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    String nameI = pets.get(i).getRace();
+                    String nameJ = pets.get(j).getRace();
+                    if (nameI.compareTo(nameJ) > 0) {
+                        // swapping
+                        Pets temp = pets.get(i);
+                        pets.set(i, pets.get(j));
+                        pets.set(j, temp);
+                    }
+                }
+            }
+        } else if (sortValue.equalsIgnoreCase("owner")) {
+            for (int i = 0; i < n; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    String nameI = pets.get(i).getOwner();
+                    String nameJ = pets.get(j).getOwner();
+                    if (nameI.compareTo(nameJ) > 0) {
+                        // swapping
+                        Pets temp = pets.get(i);
+                        pets.set(i, pets.get(j));
+                        pets.set(j, temp);
+                    }
+                }
+            }
+        } else if (sortValue.equalsIgnoreCase("age")) {
+            for (int i = 0; i < n; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    int nameI = pets.get(i).getAge();
+                    int nameJ = pets.get(j).getAge();
+                    if (nameI > nameJ) {
+                        // swapping
+                        Pets temp = pets.get(i);
+                        pets.set(i, pets.get(j));
+                        pets.set(j, temp);
+                    }
+                }
+            }
+        } else if (sortValue.equalsIgnoreCase("owner_age")) {
+            for (int i = 0; i < n; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    int nameI = pets.get(i).getOwner_age();
+                    int nameJ = pets.get(j).getOwner_age();
+                    if (nameI > nameJ) {
+                        // swapping
+                        Pets temp = pets.get(i);
+                        pets.set(i, pets.get(j));
+                        pets.set(j, temp);
+                    }
+                }
+            }
+        }
+
+        return pets;
+    }
 }
