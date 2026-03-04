@@ -1,4 +1,4 @@
-package com.example.manual;
+package com.example.petapplication;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
