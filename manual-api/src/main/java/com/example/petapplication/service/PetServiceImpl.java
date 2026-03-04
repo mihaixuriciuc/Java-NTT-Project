@@ -4,6 +4,7 @@ import com.example.petapplication.dto.PetDto;
 import com.example.petapplication.dto.PetUpdateDto;
 import com.example.petapplication.entity.Pet;
 
+import com.example.petapplication.error.PetNotFoundException;
 import com.example.petapplication.repository.PetRepository;
 import com.example.petapplication.mapper.PetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class PetServiceImpl implements PetService{
     @Override
     public List <PetDto> fetchAllPets(){
         List <Pet> petsToFind =  petRepository.findAll();
+        if (petsToFind.isEmpty()){
+            throw new PetNotFoundException("The database is empty."); // this error
+        }
         List <PetDto> finalPetsDto = new ArrayList<>();
         for (Pet pet : petsToFind){
             PetDto updatedPet = petMapper.convertToDto(pet);
@@ -39,14 +43,19 @@ public class PetServiceImpl implements PetService{
     @Override
     public PetDto fetchPetById(Long petId){
         Pet pet = petRepository.findById(petId).orElse(null);
-
-        return petMapper.convertToDto(pet) ;
+        if(!petRepository.existsById(petId)){
+            throw new PetNotFoundException("Pet Id (" + petId + ") not found."); // this error
+        }else {
+            return petMapper.convertToDto(pet);
+        }
     };
 
     @Override
     public PetDto updatePet(PetUpdateDto petUpdate, Long petId){
         Pet petObject = petRepository.findById(petId).orElse(null);
-
+        if(!petRepository.existsById(petId)){
+            throw new PetNotFoundException("Pet Id (" + petId + ") not found to update."); // this error
+        }
         if(Objects.nonNull(petUpdate.getName()) && !"".equalsIgnoreCase(petUpdate.getName())){
             petObject.setName(petUpdate.getName());
         }
@@ -62,9 +71,11 @@ public class PetServiceImpl implements PetService{
     }
     @Override
     public void deletePetById(Long petId){
-
-         petRepository.deleteById(petId);
-
+        if(!petRepository.existsById(petId)){
+            throw new PetNotFoundException("Pet Id (" + petId + ") not found to delete."); // this error
+        }else {
+            petRepository.deleteById(petId);
+        }
     }
 }
 

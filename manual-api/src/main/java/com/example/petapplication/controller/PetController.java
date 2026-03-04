@@ -3,7 +3,10 @@ import com.example.petapplication.dto.PetDto;
 import com.example.petapplication.dto.PetUpdateDto;
 import com.example.petapplication.entity.Pet;
 import com.example.petapplication.service.PetService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,28 +18,32 @@ public class PetController {
 
 
     @PostMapping("/pets")
-    public Pet postPet(@RequestBody PetDto petDto){
-        return petService.savePet(petDto);
+    public ResponseEntity<Pet> postPet(@Valid @RequestBody PetDto petDto){
+        return new ResponseEntity<>(petService.savePet(petDto),HttpStatus.CREATED);
 
     }
 
     @GetMapping("/pets")
-    public List <PetDto> getPetList(){
-        return petService.fetchAllPets();
+    public ResponseEntity<List<PetDto>> getPetList(){
+        return new ResponseEntity<>(petService.fetchAllPets(),HttpStatus.OK);
     }
+
     @GetMapping("/pets/{petId}")
-    public PetDto getIndvivdualPet(@PathVariable Long petId){
-        return petService.fetchPetById(petId);
+    public ResponseEntity<PetDto> getIndvivdualPet(@PathVariable Long petId){
+        return new ResponseEntity<>(petService.fetchPetById(petId),HttpStatus.OK);
     }
 
     @PutMapping("/pets/{petId}")
-    public void updatePet(@RequestBody PetUpdateDto petUpdateDto, @PathVariable Long petId){
-        petService.updatePet(petUpdateDto,petId);
+    public ResponseEntity<PetDto> updatePet(@Valid @RequestBody PetUpdateDto petUpdateDto, @PathVariable Long petId){
+        PetDto pet = petService.updatePet(petUpdateDto,petId);
+
+        return new ResponseEntity<>(pet, HttpStatus.CREATED);
     }
 
-    @DeleteMapping ("/pets/{petId}")
-    public void deletePet(@PathVariable Long petId){
-        petService.deletePetById(petId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePet(@PathVariable Long id) {
+        petService.deletePetById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

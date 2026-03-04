@@ -10,6 +10,7 @@ public class PetMapper {
 
     public Pet convertToEntity(PetDto petDto){
         Pet pet = new Pet();
+        pet.setPetId(petDto.getId());
         pet.setName(petDto.getName());
         pet.setType(petDto.getType());
         pet.setAge(petDto.getAge());
@@ -23,7 +24,9 @@ public class PetMapper {
 
 
     public PetDto convertToDto(Pet pet) {
+
         PetDto petDto = new PetDto();
+        petDto.setId(pet.getPetId());
         petDto.setName(pet.getName());
         petDto.setType(pet.getType());
         petDto.setAge(pet.getAge());
