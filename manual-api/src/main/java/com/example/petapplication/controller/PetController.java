@@ -1,4 +1,6 @@
 package com.example.petapplication.controller;
+import com.example.petapplication.dto.PetDto;
+import com.example.petapplication.dto.PetUpdateDto;
 import com.example.petapplication.entity.Pet;
 import com.example.petapplication.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,23 +15,23 @@ public class PetController {
 
 
     @PostMapping("/pets")
-    public Pet postPet(@RequestBody Pet pet){
-        return petService.savePet(pet);
+    public Pet postPet(@RequestBody PetDto petDto){
+        return petService.savePet(petDto);
 
     }
 
     @GetMapping("/pets")
-    public List <Pet> getPetList(){
+    public List <PetDto> getPetList(){
         return petService.fetchAllPets();
     }
     @GetMapping("/pets/{petId}")
-    public Pet getIndvivdualPet(@PathVariable Long petId){
+    public PetDto getIndvivdualPet(@PathVariable Long petId){
         return petService.fetchPetById(petId);
     }
 
     @PutMapping("/pets/{petId}")
-    public void updatePet(@RequestBody Pet pet, @PathVariable Long petId){
-        petService.updatePet(pet,petId);
+    public void updatePet(@RequestBody PetUpdateDto petUpdateDto, @PathVariable Long petId){
+        petService.updatePet(petUpdateDto,petId);
     }
 
     @DeleteMapping ("/pets/{petId}")

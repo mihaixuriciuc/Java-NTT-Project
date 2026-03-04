@@ -1,11 +1,15 @@
 package com.example.petapplication.service;
 
+import com.example.petapplication.dto.PetDto;
+import com.example.petapplication.dto.PetUpdateDto;
 import com.example.petapplication.entity.Pet;
 
 import com.example.petapplication.repository.PetRepository;
+import com.example.petapplication.mapper.PetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,48 +17,52 @@ import java.util.Objects;
 public class PetServiceImpl implements PetService{
     @Autowired
     private PetRepository petRepository;
+    @Autowired
+    private PetMapper petMapper;
 
     @Override
-    public Pet savePet(Pet pet){
-        return petRepository.save(pet);
+    public Pet savePet(PetDto petDto){
+        return petRepository.save(petMapper.convertToEntity(petDto));
     }
 
     @Override
-    public List <Pet> fetchAllPets(){
-        return (List <Pet>) petRepository.findAll();
+    public List <PetDto> fetchAllPets(){
+        List <Pet> petsToFind =  petRepository.findAll();
+        List <PetDto> finalPetsDto = new ArrayList<>();
+        for (Pet pet : petsToFind){
+            PetDto updatedPet = petMapper.convertToDto(pet);
+            finalPetsDto.add(updatedPet);
+        }
+        return finalPetsDto;
     }
 
     @Override
-    public Pet fetchPetById(Long petId){
-        return petRepository.findById(petId).orElse(null);
+    public PetDto fetchPetById(Long petId){
+        Pet pet = petRepository.findById(petId).orElse(null);
+
+        return petMapper.convertToDto(pet) ;
     };
 
     @Override
-    public Pet updatePet(Pet pet,Long petId){
+    public PetDto updatePet(PetUpdateDto petUpdate, Long petId){
         Pet petObject = petRepository.findById(petId).orElse(null);
 
-        if(Objects.nonNull(pet.getName()) && !"".equalsIgnoreCase(pet.getName())){
-            petObject.setName(pet.getName());
+        if(Objects.nonNull(petUpdate.getName()) && !"".equalsIgnoreCase(petUpdate.getName())){
+            petObject.setName(petUpdate.getName());
         }
-        if(Objects.nonNull(pet.getType()) && !"".equalsIgnoreCase(pet.getType())){
-            petObject.setType(pet.getType());
+        if(Objects.nonNull(petUpdate.getOwner()) && !"".equalsIgnoreCase(petUpdate.getOwner())){
+            petObject.setOwner(petUpdate.getOwner());
         }
-        if(Objects.nonNull(pet.getRace()) && !"".equalsIgnoreCase(pet.getRace())){
-            petObject.setRace(pet.getRace());
+        if(petUpdate.getOwnerAge() != 0){
+            petObject.setOwnerAge(petUpdate.getOwnerAge());
         }
-        if(Objects.nonNull(pet.getOwner()) && !"".equalsIgnoreCase(pet.getOwner())){
-            petObject.setOwner(pet.getOwner());
-        }
-        if(pet.getAge() != 0){
-            petObject.setAge(pet.getAge());
-        }
-        if(pet.getOwnerAge() != 0){
-            petObject.setOwnerAge(pet.getOwnerAge());
-        }
-        return petRepository.save(petObject);
+        Pet finalPet = petRepository.save(petObject);
+
+        return petMapper.convertToDto(finalPet);
     }
     @Override
     public void deletePetById(Long petId){
+
          petRepository.deleteById(petId);
 
     }
